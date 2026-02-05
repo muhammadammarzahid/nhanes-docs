@@ -38,7 +38,7 @@ function in the __nhanesA__ package.
 ```{r}
 library(nhanesA)
 nhanesOptions(log.access = TRUE)
-nhanesSearch("body mass index")
+nhanesSearch("body mass index", ignore.case = TRUE)
 ```
 
 These results tell us that BMI measurements are available as the
