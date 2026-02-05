@@ -160,16 +160,18 @@ g <- expand.grid(cycle = names(all_designs),
                  KEEP.OUT.ATTRS = FALSE)
 smooth  <- vector(mode = "list", length = nrow(g))
 for (i in seq_len(nrow(g))) {
-    fm <- svyglm(BMXBMI ~ ns_age(RIDAGEYR),
-                 design = all_designs[[ g$cycle[i] ]],
-                 subset = RIDRETH1 == g$ethnicity[i] & RIAGENDR == g$gender[i])
-    smooth[[i]] <-
-        data.frame(cycle = g$cycle[i],
-                   ethnicity = g$ethnicity[i],
-                   gender = g$gender[i],
-                   Age = 20:75,
-                   AvgBMI = predict(fm, newdata = list(RIDAGEYR = 20:75),
-                                    type = "response") |> as.numeric())
+  fm <- svyglm(BMXBMI ~ ns_age(RIDAGEYR),
+               design = all_designs[[ g$cycle[i] ]],
+               # CHANGE HERE: Use as.character() to bypass factor level checks
+               subset = as.character(RIDRETH1) == as.character(g$ethnicity[i]) & 
+                 RIAGENDR == g$gender[i])
+  smooth[[i]] <- 
+    data.frame(cycle = g$cycle[i],
+               ethnicity = g$ethnicity[i],
+               gender = g$gender[i],
+               Age = 20:75,
+               AvgBMI = predict(fm, newdata = list(RIDAGEYR = 20:75), 
+                                type = "response") |> as.numeric())
 }
 smoothDF <- do.call(rbind, smooth)
 ```
